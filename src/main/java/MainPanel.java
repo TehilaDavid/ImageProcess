@@ -21,7 +21,6 @@ public class MainPanel extends JPanel {
     private JButton filter6Button;
 
 
-
     public MainPanel(int x, int y, int width, int height) {
         this.setLayout(null);
         this.setBounds(x, y, width, height);
