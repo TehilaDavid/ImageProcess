@@ -1,7 +1,11 @@
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class MainPanel extends JPanel {
 
@@ -12,37 +16,84 @@ public class MainPanel extends JPanel {
     private JTextField searchTextField;
 
     private Font buttonFont;
+    private ImageIcon bob;
+    private ImageIcon bobFiltered;
 
-    private JButton filter1Button;
-    private JButton filter2Button;
-    private JButton filter3Button;
-    private JButton filter4Button;
-    private JButton filter5Button;
-    private JButton filter6Button;
+    private JButton colorShiftRight;
+    private JButton colorShiftLeft;
+    private JButton grayscale;
+    private JButton negative;
+    private JButton sepia;
+    private JButton lighter;
+
+    private boolean click;
+    private BufferedImage spongeBob;
 
 
     public MainPanel(int x, int y, int width, int height) {
         this.setLayout(null);
         this.setBounds(x, y, width, height);
         buildPanel();
+
+
         this.buttonFont = new Font("David", Font.BOLD, Constants.BUTTON_FONT_SIZE);
 
+        File file = new File("SpongeBob.jpg");
+        try {
+            this.spongeBob = ImageIO.read(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        System.setProperty("webdriver.chrome.driver",
-                "C:\\Users\\tehil\\Downloads\\chromedriver_win32\\chromedriver.exe");
+//        System.setProperty("webdriver.chrome.driver",
+//                "C:\\Users\\tehil\\Downloads\\chromedriver_win32\\chromedriver.exe");
+//
+//
+//
+//        this.searchButton.addActionListener((e -> {
+//            this.driver = new ChromeDriver();
+//            this.driver.get("https://www.facebook.com/" + this.searchTextField.getText()); //split with " " and add .
+//        }));
 
-
-
-        this.searchButton.addActionListener((e -> {
-            this.driver = new ChromeDriver();
-            this.driver.get("https://www.facebook.com/" + this.searchTextField.getText()); //split with " " and add .
+        this.colorShiftRight.addActionListener((e -> {
+            colorShiftRightOrLeft(true);
         }));
+
+        this.colorShiftLeft.addActionListener((e -> {
+            colorShiftRightOrLeft(false);
+        }));
+
+        this.grayscale.addActionListener((e -> {
+            grayscale();
+        }));
+
+        this.negative.addActionListener((e -> {
+            negative();
+        }));
+
+        this.sepia.addActionListener((e -> {
+            sepia();
+        }));
+
+        this.lighter.addActionListener((e -> {
+            lighter();
+        }));
+    }
+
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        this.bob = new ImageIcon("SpongeBob.jpg");
+        this.bob.paintIcon(this, g, 30, 30);
+
+//        this.bobFiltered = new ImageIcon("SpongeBob - Copy.jpg");
+//        this.bobFiltered.paintIcon(this, g, this.searchButton.getX() + this.searchButton.getWidth() + 30, 30);
     }
 
 
     private void buildPanel() {
         this.searchTextField = new JTextField();
-        this.searchTextField.setBounds((Constants.WINDOW_WIDTH - (Constants.BUTTON_WIDTH / 2))/ 2, Constants.WINDOW_HEIGHT / 10, Constants.BUTTON_WIDTH / 2, Constants.BUTTON_HEIGHT);
+        this.searchTextField.setBounds((Constants.WINDOW_WIDTH / 2 - (Constants.BUTTON_WIDTH / 2)), Constants.WINDOW_HEIGHT / 10, Constants.BUTTON_WIDTH / 2, Constants.BUTTON_HEIGHT);
         this.add(this.searchTextField);
 
 
@@ -53,41 +104,175 @@ public class MainPanel extends JPanel {
         this.add(this.searchButton);
 
 
-        this.filter1Button = new JButton();
-        this.filter1Button.setBounds(this.searchTextField.getX(), this.searchTextField.getY() + Constants.BUTTON_HEIGHT + Constants.SPACE, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT);
-        this.filter1Button.setText("Filter1");
-        this.filter1Button.setFont(this.buttonFont);
-        this.add(this.filter1Button);
+        this.colorShiftRight = new JButton();
+        this.colorShiftRight.setBounds(this.searchTextField.getX(), this.searchTextField.getY() + Constants.BUTTON_HEIGHT + Constants.SPACE, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT);
+        this.colorShiftRight.setText("Color Shift Right");
+        this.colorShiftRight.setFont(this.buttonFont);
+        this.add(this.colorShiftRight);
 
-        this.filter2Button = new JButton();
-        this.filter2Button.setBounds(this.searchTextField.getX(), this.filter1Button.getY() + Constants.BUTTON_HEIGHT + Constants.SPACE, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT);
-        this.filter2Button.setText("Filter2");
-        this.filter2Button.setFont(this.buttonFont);
-        this.add(this.filter2Button);
+        this.colorShiftLeft = new JButton();
+        this.colorShiftLeft.setBounds(this.searchTextField.getX(), this.colorShiftRight.getY() + Constants.BUTTON_HEIGHT + Constants.SPACE, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT);
+        this.colorShiftLeft.setText("Color Shift Left");
+        this.colorShiftLeft.setFont(this.buttonFont);
+        this.add(this.colorShiftLeft);
 
-        this.filter3Button = new JButton();
-        this.filter3Button.setBounds(this.searchTextField.getX(), this.filter2Button.getY() + Constants.BUTTON_HEIGHT + Constants.SPACE, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT);
-        this.filter3Button.setText("Filter3");
-        this.filter3Button.setFont(this.buttonFont);
-        this.add(this.filter3Button);
+        this.grayscale = new JButton();
+        this.grayscale.setBounds(this.searchTextField.getX(), this.colorShiftLeft.getY() + Constants.BUTTON_HEIGHT + Constants.SPACE, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT);
+        this.grayscale.setText("Grayscale");
+        this.grayscale.setFont(this.buttonFont);
+        this.add(this.grayscale);
 
-        this.filter4Button = new JButton();
-        this.filter4Button.setBounds(this.searchTextField.getX(), this.filter3Button.getY() + Constants.BUTTON_HEIGHT + Constants.SPACE, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT);
-        this.filter4Button.setText("Filter4");
-        this.filter4Button.setFont(this.buttonFont);
-        this.add(this.filter4Button);
+        this.negative = new JButton();
+        this.negative.setBounds(this.searchTextField.getX(), this.grayscale.getY() + Constants.BUTTON_HEIGHT + Constants.SPACE, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT);
+        this.negative.setText("Negative");
+        this.negative.setFont(this.buttonFont);
+        this.add(this.negative);
 
-        this.filter5Button = new JButton();
-        this.filter5Button.setBounds(this.searchTextField.getX(), this.filter4Button.getY() + Constants.BUTTON_HEIGHT + Constants.SPACE, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT);
-        this.filter5Button.setText("Filter5");
-        this.filter5Button.setFont(this.buttonFont);
-        this.add(this.filter5Button);
+        this.sepia = new JButton();
+        this.sepia.setBounds(this.searchTextField.getX(), this.negative.getY() + Constants.BUTTON_HEIGHT + Constants.SPACE, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT);
+        this.sepia.setText("Sepia");
+        this.sepia.setFont(this.buttonFont);
+        this.add(this.sepia);
 
-        this.filter6Button = new JButton();
-        this.filter6Button.setBounds(this.searchTextField.getX(), this.filter5Button.getY() + Constants.BUTTON_HEIGHT + Constants.SPACE, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT);
-        this.filter6Button.setText("Filter6");
-        this.filter6Button.setFont(this.buttonFont);
-        this.add(this.filter6Button);
+        this.lighter = new JButton();
+        this.lighter.setBounds(this.searchTextField.getX(), this.sepia.getY() + Constants.BUTTON_HEIGHT + Constants.SPACE, Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT);
+        this.lighter.setText("Lighter");
+        this.lighter.setFont(this.buttonFont);
+        this.add(this.lighter);
 
     }
+
+    private void colorShiftRightOrLeft(boolean isRight) {
+        try {
+            for (int x = 0; x < this.spongeBob.getWidth(); x++) {
+                for (int y = 0; y < this.spongeBob.getHeight(); y++) {
+                    int current = this.spongeBob.getRGB(x, y);
+                    Color pixel = new Color(current);
+
+                    int red;
+                    int green;
+                    int blue;
+                    if (isRight) {
+                        red = pixel.getGreen();
+                        green = pixel.getBlue();
+                        blue = pixel.getRed();
+                    } else {
+                        red = pixel.getBlue();
+                        green = pixel.getRed();
+                        blue = pixel.getGreen();
+                    }
+
+
+                    Color newColor = new Color(red, green, blue);
+
+                    this.spongeBob.setRGB(x, y, newColor.getRGB());
+                }
+            }
+
+            File file1 = new File("SpongeBob - Copy.jpg");
+            ImageIO.write(spongeBob, "jpg", file1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void grayscale() {
+        try {
+            for (int x = 0; x < this.spongeBob.getWidth(); x++) {
+                for (int y = 0; y < this.spongeBob.getHeight(); y++) {
+                    int current = this.spongeBob.getRGB(x, y);
+                    Color pixel = new Color(current);
+
+                    int red = pixel.getRed();
+                    int green = pixel.getGreen();
+                    int blue = pixel.getBlue();
+                    int pixel2 = (red + green + blue) / 3;
+
+                    Color newColor = new Color(pixel2, pixel2, pixel2);
+
+                    this.spongeBob.setRGB(x, y, newColor.getRGB());
+                }
+            }
+
+            File file1 = new File("SpongeBob - Copy.jpg");
+            ImageIO.write(this.spongeBob, "jpg", file1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void negative() {
+        for (int j = 0; j < this.spongeBob.getHeight(); j++) {
+            for (int i = 0; i < this.spongeBob.getWidth(); i++) {
+                Color currentColor = new Color(this.spongeBob.getRGB(i, j));
+                Color negativeColor = new Color(255 - currentColor.getRed(), 255 - currentColor.getGreen(), 255 - currentColor.getBlue());
+                this.spongeBob.setRGB(i, j, negativeColor.getRGB());
+            }
+        }
+        File file1 = new File("SpongeBob - Copy.jpg");
+        try {
+            ImageIO.write(this.spongeBob, "jpg", file1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void sepia() {
+        try {
+            for (int x = 0; x < this.spongeBob.getWidth(); x++) {
+                for (int y = 0; y < this.spongeBob.getHeight(); y++) {
+                    int current = this.spongeBob.getRGB(x, y);
+                    Color pixel = new Color(current);
+
+                    int red = (int) ((0.393 * pixel.getRed()) + (0.769 * pixel.getRed()) + (0.189 * pixel.getBlue()));
+                    int green = (int) ((0.349 * pixel.getRed()) + (0.686 * pixel.getRed()) + (0.168 * pixel.getBlue()));
+                    int blue = (int) ((0.272 * pixel.getRed()) + (0.534 * pixel.getRed()) + (0.131 * pixel.getBlue()));
+
+                    Color newColor = new Color(intenseColor(red), intenseColor(green), intenseColor(blue));
+
+                    this.spongeBob.setRGB(x, y, newColor.getRGB());
+                }
+            }
+
+            File file1 = new File("SpongeBob - Copy.jpg");
+            ImageIO.write(spongeBob, "jpg", file1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void lighter () {
+        try {
+            for (int x = 0; x < this.spongeBob.getWidth(); x++) {
+                for (int y = 0; y < this.spongeBob.getHeight(); y++) {
+                    int current = this.spongeBob.getRGB(x, y);
+                    Color pixel = new Color(current);
+
+                    int red = intenseColor(pixel.getRed() * 2);
+                    int green = intenseColor(pixel.getGreen() * 2);
+                    int blue = intenseColor(pixel.getBlue() * 2);
+
+                    Color newColor = new Color(red, green, blue);
+
+                    this.spongeBob.setRGB(x, y, newColor.getRGB());
+                }
+            }
+
+            File file1 = new File("SpongeBob - Copy.jpg");
+            ImageIO.write(spongeBob, "jpg", file1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private int intenseColor (int originalColor) {
+        if (originalColor > 255) {
+            originalColor = 255;
+        }
+        return originalColor;
+    }
+
+
 }
+
