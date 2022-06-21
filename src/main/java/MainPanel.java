@@ -6,6 +6,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class MainPanel extends JPanel {
 
@@ -83,8 +85,27 @@ public class MainPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        this.bob = new ImageIcon("SpongeBob.jpg");
-        this.bob.paintIcon(this, g, 30, 30);
+//        this.bob = new ImageIcon("SpongeBob.jpg");
+//        this.bob.paintIcon(this, g, 30, 30);
+
+
+        URL url = null;
+        try {
+            url = new URL("https://scontent.ftlv2-1.fna.fbcdn.net/v/t31.18172-8/13495603_10208804454302325_4957734764946397361_o.jpg?_nc_cat=104&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=1D8lt6BoBRkAX-rEH-p&_nc_ht=scontent.ftlv2-1.fna&oh=00_AT_XHN9X0tLdxwAk_RCueDVRJM0T4Ip-nu1Kebxs-6_wbQ&oe=62D5E22B");
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ImageIcon imageIcon = new ImageIcon(image);
+
+        imageIcon.paintIcon(this, g, 30, 30);
+
 
 //        this.bobFiltered = new ImageIcon("SpongeBob - Copy.jpg");
 //        this.bobFiltered.paintIcon(this, g, this.searchButton.getX() + this.searchButton.getWidth() + 30, 30);
@@ -242,7 +263,7 @@ public class MainPanel extends JPanel {
         }
     }
 
-    private void lighter () {
+    private void lighter() {
         try {
             for (int x = 0; x < this.spongeBob.getWidth(); x++) {
                 for (int y = 0; y < this.spongeBob.getHeight(); y++) {
@@ -266,7 +287,7 @@ public class MainPanel extends JPanel {
         }
     }
 
-    private int intenseColor (int originalColor) {
+    private int intenseColor(int originalColor) {
         if (originalColor > 255) {
             originalColor = 255;
         }
